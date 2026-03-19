@@ -87,6 +87,14 @@ The only fixed parts are `_core/` (always loaded) and `_index.md` (auto-maintain
 
 CLAUDE.md tells AI how to work on your **project** (coding style, tech stack, conventions). This skill tells AI who **you** are (identity, preferences, goals, knowledge). One manages the project, the other manages the person. They work together — not a replacement for either.
 
+## Fallback (Optional)
+
+Skills may not activate in every conversation. For guaranteed memory loading, add this line to your CLAUDE.md:
+
+> When I say "load memory", read files from ~/.persistent-memory/_core/ and ~/.persistent-memory/_index.md
+
+This ensures memory works even when the skill isn't triggered.
+
 ## Compatibility
 
 Works with any AI agent that supports the skills protocol, including Claude Code and other agents on [skills.sh](https://skills.sh).
