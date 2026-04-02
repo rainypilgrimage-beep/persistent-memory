@@ -1,34 +1,27 @@
 # persistent-memory
 
-**Stop re-introducing yourself to AI. Install once, remember forever.**
+**One memory for all your AI agents.**
 
-Every new conversation starts from zero — your AI doesn't know who you are, what you're working on, or how you like to collaborate. You end up repeating the same context over and over.
+Claude doesn't know what you told Cursor. Codex doesn't know what Antigravity saved. Switch tools and you start from zero.
 
-This skill gives your AI a persistent memory. Your identity, preferences, projects, and notes are stored as simple markdown files and loaded into every conversation automatically.
+Install this skill and every agent reads the same memory. One command. No copy-pasting. No repeating yourself.
 
 ## See It In Action
+You: load memory
 
-```
-You:  load memory
+AI: Context loaded. I know you're a product designer at a startup, currently focused on the v2 redesign. You prefer direct feedback and like to think through problems step by step before coding. I also have notes on 3 projects and your design principles.
 
-AI:   Context loaded. I know you're a product designer at a startup,
-      currently focused on the v2 redesign. You prefer direct feedback
-      and like to think through problems step by step before coding.
-      I also have notes on 3 projects and your design principles.
+You: Let's pick up the onboarding flow we discussed last week.
 
-You:  Let's pick up the onboarding flow we discussed last week.
+AI: [reads the relevant project file on demand] Right — last time we narrowed it down to two approaches...
 
-AI:   [reads the relevant project file on demand]
-      Right — last time we narrowed it down to two approaches...
-```
+**That's the experience.** One command, and your AI picks up where you left off — no matter which agent you're using.
 
-**That's the experience.** One command, and your AI is no longer a stranger.
+## Why Not Just Use Each Agent's Built-in Memory?
 
-## How Is This Different From ChatGPT Memory?
+Every agent has some form of memory now. The problem isn't that they can't remember — it's that **they each remember separately**. Your Claude doesn't know what you told Cursor. Your Codex doesn't know what Antigravity saved. Switch tools and you start from zero.
 
-ChatGPT Memory saves things automatically — and often gets it wrong. You can't see what it stored, can't organize it, and can't load it selectively.
-
-This skill flips that: **you decide what to save, you can read and edit every file, and your AI loads only what's relevant.** It's your memory, not the AI's guess.
+This skill replaces all of that with one shared memory on your local machine. You control what's saved, you can read and edit every file, and it works across every agent that supports the skills protocol.
 
 ## Quick Start
 
@@ -47,14 +40,7 @@ Next time, just say **"load memory"** and your AI knows you.
 - **You stay in control** — nothing is saved without your review and approval
 
 ## How It Works
-
-```
-~/.persistent-memory/
-├── _core/             # Always loaded (identity, preferences)
-├── _index.md          # Lightweight index of all other files
-├── projects/          # Loaded on demand
-└── notes/             # Loaded on demand
-```
+~/.persistent-memory/ ├── _core/ # Always loaded (identity, preferences) ├── _index.md # Lightweight index of all other files ├── projects/ # Loaded on demand └── notes/ # Loaded on demand
 
 **Core files** load every conversation — your AI always knows the basics.
 **Everything else** is indexed with one-line summaries and loaded only when the topic comes up. This keeps token usage low as your memory grows.
@@ -97,7 +83,13 @@ This ensures memory works even when the skill isn't triggered.
 
 ## Compatibility
 
-Works with any AI agent that supports the skills protocol, including Claude Code and other agents on [skills.sh](https://skills.sh).
+Works with any AI agent that supports the skills protocol. Tested with:
+- **Claude Code** (Anthropic)
+- **Codex CLI** (OpenAI)
+- **Antigravity** (Google)
+- Other agents on [skills.sh](https://skills.sh)
+
+Since memory is stored as local files, all agents on the same machine share the same context automatically.
 
 ## Privacy
 
