@@ -1,6 +1,6 @@
 ---
 name: persistent-memory
-description: Your AI finally remembers who you are. Stores your identity, preferences, projects and notes as persistent markdown files — core context always loaded, details indexed on demand. Say "load memory" or "加载记忆" to activate.
+description: One memory for all your AI agents. Stores your identity, preferences, projects and notes as local markdown files that every agent shares — no more copy-pasting context between tools. Say "load memory" or "加载记忆" to activate.
 ---
 
 # Persistent Memory System
