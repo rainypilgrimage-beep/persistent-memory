@@ -23,6 +23,9 @@ You manage a cross-session memory system. The user's personal context is stored 
 │   └── preferences.md #   Collaboration style, communication preferences, work habits
 ├── projects/          # On-demand: specific project details
 └── notes/             # On-demand: knowledge, frameworks, learnings
+├── _archive/          # Archived & trashed files (not loaded by default)
+│   ├── _index.md      #   Archive index (only loaded on explicit request)
+│   └── _trash/        #   30-day trash buffer before permanent deletion
 ```
 
 Two tiers:
@@ -35,6 +38,8 @@ Check if `~/.persistent-memory/` exists.
 
 - **Exists**: Read all files in `_core/` + read `_index.md`. Briefly acknowledge context is loaded (1 sentence, don't recite contents).
 - **Doesn't exist**: Do nothing until you detect saveable info or user asks to set up memory.
+
+**Do not read `_archive/` or `_archive/_index.md` during normal conversation start.** Archived files are only accessed when the user explicitly asks to search archives or recover a file.
 
 ## _index.md Format
 
@@ -51,6 +56,8 @@ Check if `~/.persistent-memory/` exists.
 
 When saving or updating any on-demand file, always update `_index.md` to reflect the change.
 
+The archive has its own separate index at `_archive/_index.md`, with the same format plus archive date and reason for each entry. It is only read when the user explicitly asks about archived content.
+
 ## Operations
 
 ### Load Memory (Primary)
@@ -64,9 +71,7 @@ Trigger: "load memory" / "加载记忆" / "what do you know about me" / "我的�
 Trigger: conversation topic matches an entry in `_index.md`.
 
 1. Identify which file(s) are relevant based on `_index.md` summaries.
-2. Check file size:
-   - **Under 100 lines**: Read the full file.
-   - **100 lines or more**: Read only the `## Summary` section at the top first. If that answers the need, stop. If more detail is needed, then read the full file.
+2. Read the full file(s).
 3. No need to announce — use the information naturally.
 
 ### Save / Update
@@ -114,6 +119,7 @@ Rules:
 
 When memory directory doesn't exist and user confirms the first save:
 1. Create the directory structure (`_core/`, `projects/`, `notes/`, `_index.md`).
+2. Also create `_archive/`, `_archive/_trash/`, and `_archive/_index.md`.
 2. Save the content to the appropriate file.
 3. Briefly explain: "I've set up a memory system. I'll remember this across conversations. Say 'load memory' at the start of future conversations to activate it."
 
@@ -126,6 +132,70 @@ Trigger: "memory status" / "记忆状态" / "what's saved" / "存了什么".
 2. For each file: name + one-line summary.
 3. Show total count and approximate size.
 
+### Archive
+
+Trigger: "archive &lt;path&gt;" / "归档 &lt;路径&gt;" / "move to archive"
+
+1. Verify the file exists in the active memory (not already archived).
+2. Move it to `_archive/`, preserving its directory structure (e.g., `projects/old.md` → `_archive/projects/old.md`).
+3. Remove its entry from `_index.md`.
+4. Add an entry to `_archive/_index.md` with: filename, archive date, reason (ask user if not provided).
+5. Confirm: "Archived: &lt;path&gt; → _archive/&lt;path&gt;"
+
+Archived files are never loaded during normal "load memory" or on-demand loading. They are only read when the user explicitly asks to search archives or recover a file.
+
+**Archive threshold (strict):** Only archive if the file is truly unused day-to-day. Ask: "Would this ever be needed in any foreseeable future scenario?" If yes — keep it active. "Used occasionally but not daily" → archive. "Never needed again" → delete instead.
+
+### Delete
+
+Trigger: "delete &lt;path&gt;" / "删除 &lt;路径&gt;" / "remove file"
+
+1. Verify the file exists (active or already archived).
+2. Move it to `_archive/_trash/`, preserving its directory structure.
+3. Record the deletion date and the 30-day expiry date.
+4. Update `_index.md` (remove if active) and `_archive/_index.md` (add trash entry with expiry).
+5. Confirm: "Deleted: &lt;path&gt; → _archive/_trash/&lt;path&gt;. Recoverable until &lt;expiry date&gt;."
+
+**30-day buffer:** Files in `_trash/` are kept for 30 days before permanent deletion. During this window, they can be recovered with the `recover` command. After 30 days, permanently remove them during the next health check.
+
+### Recover
+
+Trigger: "recover &lt;path&gt;" / "恢复 &lt;路径&gt;" / "restore file"
+
+1. Search for the file in `_archive/` (including `_archive/_trash/`).
+2. If found, move it back to its original location (strip the `_archive/` or `_archive/_trash/` prefix).
+3. Add its entry back to `_index.md`.
+4. Remove its entry from `_archive/_index.md`.
+5. Confirm: "Recovered: _archive/&lt;path&gt; → &lt;original path&gt;"
+
+If the original parent directory no longer exists, recreate it.
+
+### Memory Health Check
+
+Trigger: "memory health" / "记忆体检" / "clean up memory"
+
+A three-stage review to keep memory lean without losing anything important:
+
+**Stage 1 — Mechanical scan:**
+- Scan all on-demand directories (never touch `_core/` — core files are always needed).
+- Identify files that appear inactive: not mentioned in recent conversation, no recent modifications, topic seems concluded.
+
+**Stage 2 — AI semantic judgment (strict threshold):**
+For each flagged file, ask: "Would this ever be needed in any foreseeable future scenario?"
+- "Used occasionally but not daily" → suggest **archive**
+- "Never needed again" → suggest **delete**
+- "Still relevant / might need soon" → keep active
+- When in doubt, default to keeping active. False-positive archiving is worse than keeping a stale file.
+
+**Stage 3 — User decision:**
+- Present a numbered list of suggestions with a one-line reason for each.
+- User approves, modifies, or rejects each item individually.
+- Never auto-execute. All archive/delete actions require explicit user confirmation.
+
+After the health check, update both `_index.md` and `_archive/_index.md`.
+
+Also check `_archive/_trash/` for items past their 30-day expiry. List them and ask the user for confirmation before permanent deletion.
+
 ## Core Rules
 
 1. **Always read before writing.** Never modify a file you haven't read in this conversation.
@@ -136,4 +206,6 @@ Trigger: "memory status" / "记忆状态" / "what's saved" / "存了什么".
 6. **Keep core small.** Only put universally needed context in `_core/`. Topic-specific details go to on-demand files.
 7. **Index always in sync.** Every save/update/delete to on-demand files must update `_index.md`.
 8. **No sensitive data.** If user tries to store passwords or API keys, warn them that memory files are plain text.
-9. **Maintain summaries for large files.** When a file reaches 100 lines or more, add or update a `## Summary` section (5–10 lines) at the top of the file. This summary should capture the key points so the AI can decide whether to read the full content.
+9. **Archive before delete.** Move unused files to `_archive/` first rather than deleting outright. Only use delete when the file is genuinely obsolete.
+10. **Suggest health checks.** When the index grows beyond ~50 entries or the user mentions memory is getting cluttered, suggest running a memory health check.
+11. **Archive index is separate.** `_archive/_index.md` is only read when the user explicitly asks about archived content. Never load it during normal conversation start or on-demand loading.

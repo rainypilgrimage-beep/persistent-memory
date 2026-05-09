@@ -1,25 +1,21 @@
-<div align="center">
-
 # persistent-memory
 
-> *"你跟 Claude 聊了三小时，切到 Cursor -- 它不认识你。"*
+**一份记忆，所有 AI agent 共享。一句顶一万句。**
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Claude Code](https://img.shields.io/badge/Claude_Code-Skill-blueviolet)
-![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)
+Claude 不知道你跟 Cursor 说了什么。Codex 不知道 Antigravity 存了什么。换个工具，又要从头自我介绍。
 
-你用 Claude，它不知道你跟 Cursor 说了什么。<br>
-你用 Codex，它不知道你在 Cursor 里改了什么。<br>
-你换个工具，就要把自己重新介绍一遍。
+装上这个 skill，所有 agent 读同一份记忆。说一句「加载记忆」，不用粘贴，不用重复。
 
-**一份记忆，所有 AI agent 共享。**<br>
-**说一句「加载记忆」，所有 agent 都认识你。**
+## 效果演示
+你： 加载记忆
 
-[安装](#快速开始) · [原理](#工作原理) · [指令](#指令) · [English](README.md)
+AI： 上下文已加载。你是某创业公司的产品设计师， 目前在做 v2 改版。你偏好直接的反馈， 喜欢先想清楚再动手写代码。 我还有 3 个项目的笔记和你的设计原则。
 
-</div>
+你： 我们继续上周讨论的新手引导流程。
 
----
+AI： [按需读取相关项目文件] 好的 -- 上次我们把方案缩小到两个方向...
+
+**就是这个体验。** 一句话，AI 接上之前的语境 -- 不管你用的是哪个 agent。
 
 ## 为什么不用每个 agent 自带的记忆？
 
@@ -42,18 +38,10 @@
 - **智能保存建议** -- AI 识别值得记住的内容，你决定存不存
 - **双层架构** -- 核心信息（你是谁、怎么工作）每次都加载；项目细节按需加载
 - **你说了算** -- 所有保存都经过你的确认，不会偷偷自动记录
+- **归档与清理** -- 无用文件归档、删除带 30 天安全网、随时恢复
 
 ## 工作原理
-
-![Architecture](architecture.svg)
-
-```
-~/.persistent-memory/
-├── _core/             # 始终加载（身份、偏好）
-├── _index.md          # 轻量索引
-├── projects/          # 按需加载
-└── notes/             # 按需加载
-```
+~/.persistent-memory/ ├── _core/ # 始终加载（身份、偏好） ├── _index.md # 轻量索引 ├── projects/ # 按需加载 └── notes/ # 按需加载
 
 **核心文件**每次对话都加载 -- AI 始终了解你的基本情况。
 **其他文件**以一行摘要索引，聊到相关话题时才读取完整内容。记忆增长时也不会占用太多 token。
@@ -66,6 +54,10 @@
 | "记住这个" / "save this" | 保存信息到记忆（经你确认） |
 | "更新记忆" / "update memory" | AI 扫描对话，建议保存什么 |
 | "记忆状态" / "memory status" | 显示所有已保存文件及摘要 |
+| "归档 &lt;路径&gt;" / "archive &lt;path&gt;" | 将文件移至归档（不自动加载，仍可恢复） |
+| "删除 &lt;路径&gt;" / "delete &lt;path&gt;" | 将文件移至回收站（30 天缓冲，过期后真删） |
+| "恢复 &lt;路径&gt;" / "recover &lt;path&gt;" | 从归档或回收站恢复文件 |
+| "记忆体检" / "memory health" | 扫描无用文件，建议归档或删除 |
 
 ## 自定义结构
 

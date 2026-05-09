@@ -1,25 +1,21 @@
-<div align="center">
-
 # persistent-memory
 
-> *"You talked to Claude for three hours. Switched to Cursor — it doesn't know you."*
+**One memory for all your AI agents.**
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Claude Code](https://img.shields.io/badge/Claude_Code-Skill-blueviolet)
-![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)
+Claude doesn't know what you told Cursor. Codex doesn't know what Antigravity saved. Switch tools and you start from zero.
 
-You use Claude. It doesn't know what you told Cursor.<br>
-You use Codex. It doesn't know what Cursor saved.<br>
-You switch tools. You start over.
+Install this skill and every agent reads the same memory. One command. No copy-pasting. No repeating yourself.
 
-**One memory for all your AI agents.**<br>
-**Say "load memory". Every agent knows you.**
+## See It In Action
+You: load memory
 
-[Install](#quick-start) · [How It Works](#how-it-works) · [Commands](#commands) · [中文](README_zh.md)
+AI: Context loaded. I know you're a product designer at a startup, currently focused on the v2 redesign. You prefer direct feedback and like to think through problems step by step before coding. I also have notes on 3 projects and your design principles.
 
-</div>
+You: Let's pick up the onboarding flow we discussed last week.
 
----
+AI: [reads the relevant project file on demand] Right — last time we narrowed it down to two approaches...
+
+**That's the experience.** One command, and your AI picks up where you left off — no matter which agent you're using.
 
 ## Why Not Just Use Each Agent's Built-in Memory?
 
@@ -42,18 +38,10 @@ Next time, just say **"load memory"** and your AI knows you.
 - **Save what matters** — the AI suggests saving important info, you decide what to keep
 - **Two-tier architecture** — essential context (who you are, how you work) loads every time; project details load only when relevant
 - **You stay in control** — nothing is saved without your review and approval
+- **Archive and cleanup** — move stale files to archive, delete with 30-day safety net, recover anytime
 
 ## How It Works
-
-![Architecture](architecture.svg)
-
-```
-~/.persistent-memory/
-├── _core/             # Always loaded (identity, preferences)
-├── _index.md          # Lightweight index of all other files
-├── projects/          # Loaded on demand
-└── notes/             # Loaded on demand
-```
+~/.persistent-memory/ ├── _core/ # Always loaded (identity, preferences) ├── _index.md # Lightweight index of all other files ├── projects/ # Loaded on demand └── notes/ # Loaded on demand
 
 **Core files** load every conversation — your AI always knows the basics.
 **Everything else** is indexed with one-line summaries and loaded only when the topic comes up. This keeps token usage low as your memory grows.
@@ -66,6 +54,10 @@ Next time, just say **"load memory"** and your AI knows you.
 | "remember this" / "save this" | Saves info to memory (with your review) |
 | "update memory" | AI scans the conversation and suggests what to save |
 | "memory status" | Shows all saved files and their summaries |
+| "archive &lt;path&gt;" | Moves a file to archive (not loaded, still recoverable) |
+| "delete &lt;path&gt;" | Moves a file to trash (30-day buffer, then permanently deleted) |
+| "recover &lt;path&gt;" | Restores a file from archive or trash |
+| "memory health" | Scans for stale files and suggests archive/delete actions |
 
 ## Customize
 
