@@ -57,3 +57,28 @@ test('does not present Summary-first loading as a current feature', async () => 
   assert.doesNotMatch(en, /100 lines or more.*Summary/s);
   assert.doesNotMatch(zh, /100 行及以上.*Summary/s);
 });
+
+test('preserves an index entry before archiving so recovery never guesses', async () => {
+  const [en, zh] = await Promise.all([read('SKILL.md'), read('SKILL_zh.md')]);
+
+  assert.match(en, /exact active index line/i);
+  assert.match(zh, /原始活跃索引行/);
+  assert.match(en, /must not guess/i);
+  assert.match(zh, /不得猜测/);
+});
+
+test('refuses lifecycle destination collisions before moving files', async () => {
+  const [en, zh, readmeEn, readmeZh] = await Promise.all([
+    read('SKILL.md'),
+    read('SKILL_zh.md'),
+    read('README.md'),
+    read('README_zh.md'),
+  ]);
+
+  assert.match(en, /destination does not already exist/i);
+  assert.match(zh, /目标路径不存在/);
+  assert.match(en, /stop without moving files/i);
+  assert.match(zh, /不移动任何文件/);
+  assert.match(readmeEn, /path collision/i);
+  assert.match(readmeZh, /路径冲突/);
+});

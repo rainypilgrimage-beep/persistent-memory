@@ -99,8 +99,9 @@ Every lifecycle command requires this validation before any move:
 1. Accept a normalized **relative path** such as `projects/old.md`.
 2. Reject absolute paths, home-path aliases, drive paths, and paths containing `..`.
 3. Resolve the candidate path and verify it remains inside `~/.persistent-memory/`.
-4. Never operate on `_core/`, `_index.md`, `_archive/_index.md`, hidden metadata, or lifecycle control directories.
-5. Preview the source, destination, index changes, and recovery consequence; wait for **explicit user confirmation** before changing files.
+4. Verify that the source exists and the computed destination does not already exist. If a destination collision exists, stop without moving files; never overwrite or merge files automatically.
+5. Never operate on `_core/`, `_index.md`, `_archive/_index.md`, hidden metadata, or lifecycle control directories.
+6. Preview the source, destination, index changes, and recovery consequence; wait for **explicit user confirmation** before changing files.
 
 ## Archive
 
@@ -117,8 +118,8 @@ Use these categories:
 After confirmation:
 
 1. Move the file to `_archive/<relative-path>`.
-2. Remove its active `_index.md` entry.
-3. Add its original path, archive date, and user-provided reason to `_archive/_index.md`.
+2. Only after a successful move, remove its active `_index.md` entry.
+3. Record its original path, exact active index line, archive date, and user-provided reason in `_archive/_index.md`.
 4. Confirm the final location.
 
 ## Delete
@@ -141,10 +142,12 @@ Trigger: `recover <relative-path>`, `恢复 <相对路径>`, or `restore file`.
 
 Recover only from `_archive/<relative-path>` or `_archive/_trash/<relative-path>` after the safety contract passes.
 
+Before the recovery preview, retrieve the saved exact active index line. If a legacy archive record lacks that line, read the archived file, propose a replacement line, and obtain confirmation; the agent must not guess.
+
 After confirmation:
 
 1. Restore the file to its original active on-demand path, recreating its parent directory if necessary.
-2. Restore the active `_index.md` entry.
+2. Restore the saved active `_index.md` entry exactly.
 3. Remove or update the matching `_archive/_index.md` record.
 4. Confirm the restored location.
 

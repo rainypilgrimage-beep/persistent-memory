@@ -64,7 +64,7 @@ If an agent cannot discover Skills automatically, add an equivalent instruction 
 | `recover <relative-path>` | Restores an archived or trashed file after confirmation. |
 | `memory health` | Proposes lifecycle actions; it never executes them automatically. |
 
-Lifecycle paths must be relative, such as `projects/old.md`. The skill rejects absolute paths, `..`, `_core/`, and control files.
+Lifecycle paths must be relative, such as `projects/old.md`. The skill rejects absolute paths, `..`, `_core/`, and control files. A path collision stops the operation before any file or index changes; it never overwrites a destination automatically.
 
 ## What Belongs in Memory
 
