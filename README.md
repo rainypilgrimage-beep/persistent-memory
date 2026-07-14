@@ -1,103 +1,84 @@
 # persistent-memory
 
-**One memory for all your AI agents.**
+**One reviewed local memory layer for compatible AI agents.**
 
-Claude doesn't know what you told Cursor. Codex doesn't know what Antigravity saved. Switch tools and you start from zero.
+Claude does not automatically know what you told Codex, and Codex does not automatically know what you saved elsewhere. Persistent Memory gives compatible agents a shared, readable source of context instead of asking you to paste it again.
 
-Install this skill and every agent reads the same memory. One command. No copy-pasting. No repeating yourself.
-
-## See It In Action
-You: load memory
-
-AI: Context loaded. I know you're a product designer at a startup, currently focused on the v2 redesign. You prefer direct feedback and like to think through problems step by step before coding. I also have notes on 3 projects and your design principles.
-
-You: Let's pick up the onboarding flow we discussed last week.
-
-AI: [reads the relevant project file on demand] Right — last time we narrowed it down to two approaches...
-
-**That's the experience.** One command, and your AI picks up where you left off — no matter which agent you're using.
-
-## Why Not Just Use Each Agent's Built-in Memory?
-
-Every agent has some form of memory now. The problem isn't that they can't remember — it's that **they each remember separately**. Your Claude doesn't know what you told Cursor. Your Codex doesn't know what Antigravity saved. Switch tools and you start from zero.
-
-This skill replaces all of that with one shared memory on your local machine. You control what's saved, you can read and edit every file, and it works across every agent that supports the skills protocol.
-
-## Quick Start
-
-1. Install the skill
-2. Start a conversation and share something about yourself
-3. The AI will ask: *"Want me to save this to your memory?"*
-4. Say yes — that's it. Your memory system is set up.
-
-Next time, just say **"load memory"** and your AI knows you.
+It complements platform memory; it does not replace it, import your old chats, or run in the background.
 
 ## What It Does
 
-- **Load your context instantly** — say "load memory" and your AI picks up right where you left off
-- **Save what matters** — the AI suggests saving important info, you decide what to keep
-- **Two-tier architecture** — essential context (who you are, how you work) loads every time; project details load only when relevant
-- **You stay in control** — nothing is saved without your review and approval
+- **Loads baseline context** — `load memory` reads your core files and index, not every project file.
+- **Saves with review** — the AI proposes the content and destination; you approve before it writes.
+- **Loads details on demand** — relevant project or note files are read only when the topic needs them.
+- **Manages lifecycle safely** — archive, trash, recovery, and memory health are confirmation-based.
+- **Stays transparent** — memory is plain local Markdown you can inspect and edit.
+
+## Quick Start
+
+1. Install the skill for an agent that can discover Skills.
+2. Start with an explicit command: `remember this` or `记住这个`.
+3. Review the AI's proposed file and wording, then confirm it.
+4. In a later compatible conversation, say `load memory` or `加载记忆`.
+
+If you already have a memory folder created before lifecycle support, run `memory upgrade` / `升级记忆` before using archive, delete, recover, or memory health.
 
 ## How It Works
-~/.persistent-memory/ ├── _core/ # Always loaded (identity, preferences) ├── _index.md # Lightweight index of all other files ├── projects/ # Loaded on demand └── notes/ # Loaded on demand
 
-**Core files** load every conversation — your AI always knows the basics.
-**Everything else** is indexed with one-line summaries and loaded only when the topic comes up. This keeps token usage low as your memory grows.
+```text
+~/.persistent-memory/
+├── _core/                 # Baseline identity and collaboration context
+├── _index.md              # One-line routes to active on-demand memory
+├── projects/              # Active project context
+├── notes/                 # Active knowledge and decisions
+└── _archive/              # Excluded from normal loading
+    ├── _index.md          # Archive and trash records
+    └── _trash/            # 30-day recoverable deletion buffer
+```
+
+`load memory` loads **baseline context**: `_core/` and `_index.md`. When a topic matches an index entry, the agent reads only the related active file. Archived files stay out of normal loading.
+
+## Compatibility Contract
+
+Cross-agent sharing works only when all of these are true:
+
+- Each **compatible agent** can discover this skill or has an equivalent fallback instruction.
+- The agents use the **same local filesystem** and resolve `~/.persistent-memory/` to the same location.
+- The active user has read/write permission for that location.
+
+Two agents do not automatically share every historical conversation. They share only memory files saved into this folder and only when the conditions above hold.
+
+If an agent cannot discover Skills automatically, add an equivalent instruction in that agent's configuration. The minimum fallback is: when the user says `load memory`, read `~/.persistent-memory/_core/` and `~/.persistent-memory/_index.md`.
 
 ## Commands
 
 | Say this | What happens |
-|----------|-------------|
-| "load memory" | Loads your full context |
-| "remember this" / "save this" | Saves info to memory (with your review) |
-| "update memory" | AI scans the conversation and suggests what to save |
-| "memory status" | Shows all saved files and their summaries |
-| "archive &lt;path&gt;" | Moves a file to archive (not loaded, still recoverable) |
-| "delete &lt;path&gt;" | Moves a file to trash (30-day buffer, then permanently deleted) |
-| "recover &lt;path&gt;" | Restores a file from archive or trash |
-| "memory health" | Scans for stale files and suggests archive/delete actions |
+|---|---|
+| `load memory` | Loads baseline context: core files and the active index. |
+| `remember this` / `save this` | Proposes a reviewed memory update. |
+| `update memory` | Separates proposed facts and inferred patterns for approval. |
+| `memory status` | Lists active memory structure and summaries. |
+| `memory upgrade` | Previews and, after confirmation, creates missing lifecycle folders for an older memory root. |
+| `archive <relative-path>` | Moves a completed low-frequency active file to archive after confirmation. |
+| `delete <relative-path>` | Moves an already archived file to the 30-day trash after confirmation. |
+| `recover <relative-path>` | Restores an archived or trashed file after confirmation. |
+| `memory health` | Proposes lifecycle actions; it never executes them automatically. |
 
-## Customize
+Lifecycle paths must be relative, such as `projects/old.md`. The skill rejects absolute paths, `..`, `_core/`, and control files.
 
-The default structure (`projects/`, `notes/`) is just a starting point. You can:
-- **Rename** directories to match your workflow (e.g., `clients/`, `courses/`)
-- **Add** new directories anytime — they'll be indexed automatically
-- **Reorganize** `_core/` files to fit what *you* need in every conversation
+## What Belongs in Memory
 
-The only fixed parts are `_core/` (always loaded) and `_index.md` (auto-maintained). Everything else is yours to shape.
+Keep stable identity, preferences, decisions, concise project state, and pointers to source material here.
 
-## Tips
-
-- **Best time to save**: End of conversation — update everything at once without interrupting your flow
-- **Keep core small**: Only put info needed in *every* conversation into `_core/`. Everything else goes to `projects/` or `notes/`
-- **Works in any language**: Trigger words work in English and Chinese (加载记忆, 记住这个, 记忆状态)
-
-## What About CLAUDE.md?
-
-CLAUDE.md tells AI how to work on your **project** (coding style, tech stack, conventions). This skill tells AI who **you** are (identity, preferences, goals, knowledge). One manages the project, the other manages the person. They work together — not a replacement for either.
-
-## Fallback (Optional)
-
-Skills may not activate in every conversation. For guaranteed memory loading, add this line to your CLAUDE.md:
-
-> When I say "load memory", read files from ~/.persistent-memory/_core/ and ~/.persistent-memory/_index.md
-
-This ensures memory works even when the skill isn't triggered.
-
-## Compatibility
-
-Works with any AI agent that supports the skills protocol. Tested with:
-- **Claude Code** (Anthropic)
-- **Codex CLI** (OpenAI)
-- **Antigravity** (Google)
-- Other agents on [skills.sh](https://skills.sh)
-
-Since memory is stored as local files, all agents on the same machine share the same context automatically.
+Keep raw repositories, downloads, media files, and datasets in their original project workspaces. A memory note should point to them and explain why they matter; it should not become a general-purpose file warehouse.
 
 ## Privacy
 
-All memory is stored as local markdown files on your machine. Nothing is sent to external servers. Don't store passwords or API keys — memory files are plain text.
+All memory is stored as local Markdown files. Do not put passwords, API keys, or secrets in it. The v0.7.1 lifecycle rules protect core files and require explicit confirmation before filesystem changes.
+
+## Release Status
+
+See [CHANGELOG.md](CHANGELOG.md) for the v0.7.1 reliability changes. Summary-first and section-level loading are not current features in this release.
 
 ## License
 

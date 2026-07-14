@@ -25,7 +25,7 @@
   <rect width="800" height="400" fill="url(#bg)" rx="12"/>
 
   <!-- Title -->
-  <text x="400" y="45" text-anchor="middle" fill="#e6edf3" font-size="18" font-weight="600">One memory, all your AI agents</text>
+  <text x="400" y="45" text-anchor="middle" fill="#e6edf3" font-size="18" font-weight="600">One local memory layer for compatible agents</text>
 
   <!-- Connection lines -->
   <line x1="160" y1="160" x2="310" y2="200" stroke="#2ea04380" stroke-width="2" stroke-dasharray="6,4"/>
@@ -53,11 +53,12 @@
   <text x="95" y="310" text-anchor="middle" fill="#7d8590" font-size="11">OpenAI Agent</text>
 
   <!-- Center: Memory -->
-  <rect x="310" y="150" width="180" height="110" rx="12" fill="url(#center)" stroke="#2ea043" stroke-width="1.5" filter="url(#glow)"/>
-  <text x="400" y="190" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">~/.persistent-memory/</text>
-  <text x="400" y="212" text-anchor="middle" fill="#ffffffcc" font-size="11">_core/  profile.md</text>
-  <text x="400" y="228" text-anchor="middle" fill="#ffffffcc" font-size="11">_index.md  projects/</text>
-  <text x="400" y="244" text-anchor="middle" fill="#ffffffcc" font-size="11">notes/  preferences.md</text>
+  <rect x="310" y="135" width="180" height="140" rx="12" fill="url(#center)" stroke="#2ea043" stroke-width="1.5" filter="url(#glow)"/>
+  <text x="400" y="178" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">~/.persistent-memory/</text>
+  <text x="400" y="200" text-anchor="middle" fill="#ffffffcc" font-size="11">_core/  profile.md</text>
+  <text x="400" y="216" text-anchor="middle" fill="#ffffffcc" font-size="11">_index.md  projects/</text>
+  <text x="400" y="232" text-anchor="middle" fill="#ffffffcc" font-size="11">notes/  preferences.md</text>
+  <text x="400" y="248" text-anchor="middle" fill="#ffffffcc" font-size="11">_archive/  _trash/</text>
 
   <!-- Right: What's shared -->
   <!-- Identity -->
@@ -80,5 +81,5 @@
   <text x="690" y="95" text-anchor="middle" fill="#7d8590" font-size="12" font-weight="500">SHARED CONTEXT</text>
 
   <!-- Footer -->
-  <text x="400" y="370" text-anchor="middle" fill="#484f58" font-size="12">Local markdown files -- no cloud, no API, works offline</text>
+  <text x="400" y="370" text-anchor="middle" fill="#484f58" font-size="12">Shared only when compatible agents use the same local filesystem</text>
 </svg>
