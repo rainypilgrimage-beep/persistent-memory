@@ -51,11 +51,35 @@ test('keeps raw repositories and media outside managed memory', async () => {
   assert.match(zh, /原始仓库、下载文件、媒体文件和数据集/);
 });
 
-test('does not present Summary-first loading as a current feature', async () => {
+test('documents optional summary-first loading with a safe legacy fallback', async () => {
+  const [en, zh, readmeEn, readmeZh] = await Promise.all([
+    read('SKILL.md'),
+    read('SKILL_zh.md'),
+    read('README.md'),
+    read('README_zh.md'),
+  ]);
+
+  assert.match(en, /Summary-first on-demand loading/i);
+  assert.match(en, /## Summary/);
+  assert.match(en, /summary is insufficient/i);
+  assert.match(en, /no valid summary.*read the full file/is);
+  assert.match(zh, /摘要优先的按需加载/);
+  assert.match(zh, /## 摘要/);
+  assert.match(zh, /摘要不足/);
+  assert.match(zh, /没有有效摘要.*读取全文/is);
+  assert.match(readmeEn, /optional.*Summary-first/i);
+  assert.match(readmeZh, /可选.*摘要优先/);
+});
+
+test('requires reviewed summary maintenance without automatic migration', async () => {
   const [en, zh] = await Promise.all([read('SKILL.md'), read('SKILL_zh.md')]);
 
-  assert.doesNotMatch(en, /100 lines or more.*Summary/s);
-  assert.doesNotMatch(zh, /100 行及以上.*Summary/s);
+  assert.match(en, /same preview.*explicit user confirmation/is);
+  assert.match(en, /do not automatically create.*Summary/is);
+  assert.match(en, /Do not bulk-migrate/i);
+  assert.match(zh, /同一次预览.*用户明确确认/is);
+  assert.match(zh, /不得自动创建.*摘要/is);
+  assert.match(zh, /不得批量迁移/);
 });
 
 test('preserves an index entry before archiving so recovery never guesses', async () => {

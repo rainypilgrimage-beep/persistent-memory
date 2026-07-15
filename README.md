@@ -11,6 +11,7 @@ It complements platform memory; it does not replace it, import your old chats, o
 - **Loads baseline context** — `load memory` reads your core files and index, not every project file.
 - **Saves with review** — the AI proposes the content and destination; you approve before it writes.
 - **Loads details on demand** — relevant project or note files are read only when the topic needs them.
+- **Uses optional Summary-first loading** — for an active file with a reviewed `## Summary`, the agent reads the short summary first and opens the full file only when the request needs more detail. Files without a summary keep the existing behavior.
 - **Manages lifecycle safely** — archive, trash, recovery, and memory health are confirmation-based.
 - **Stays transparent** — memory is plain local Markdown you can inspect and edit.
 
@@ -37,6 +38,26 @@ If you already have a memory folder created before lifecycle support, run `memor
 ```
 
 `load memory` loads **baseline context**: `_core/` and `_index.md`. When a topic matches an index entry, the agent reads only the related active file. Archived files stay out of normal loading.
+
+## Summary-first Files
+
+Summary-first loading is optional for active on-demand files. Put `## Summary` or `## 摘要` immediately after the title and any optional introductory metadata:
+
+```markdown
+# Project title
+
+> Optional introductory metadata
+
+## Summary
+
+- Current status or scope
+- Key decision or result
+- Important constraint or uncertainty
+
+## Full Details
+```
+
+Use three to six factual bullets. When the summary is enough, the agent answers from it; when it is not, the agent says the summary is insufficient and reads the full file. Existing files without a valid summary keep the normal full-file behavior. You do not need to bulk-migrate old files. When a reviewed update changes a summarized fact, the same proposed change updates the affected summary before you confirm it.
 
 ## Compatibility Contract
 
@@ -74,11 +95,11 @@ Keep raw repositories, downloads, media files, and datasets in their original pr
 
 ## Privacy
 
-All memory is stored as local Markdown files. Do not put passwords, API keys, or secrets in it. The v0.7.1 lifecycle rules protect core files and require explicit confirmation before filesystem changes.
+All memory is stored as local Markdown files. Do not put passwords, API keys, or secrets in it. The v0.8 lifecycle and summary rules protect core files and require explicit confirmation before filesystem changes.
 
 ## Release Status
 
-See [CHANGELOG.md](CHANGELOG.md) for the v0.7.1 reliability changes. Summary-first and section-level loading are not current features in this release.
+v0.8.0 adds optional Summary-first loading for active on-demand files. It does not add section-level loading, automatic summary creation, or bulk migration. See [CHANGELOG.md](CHANGELOG.md) for release details.
 
 ## License
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.8.0 — 2026-07-15
+
+- Added optional Summary-first loading for active on-demand memory files.
+- Preserved full-file loading for legacy files without a valid Summary.
+- Required reviewed summary updates whenever a confirmed body change affects a summarized fact.
+- Kept `_core/`, indexes, and archives outside the feature scope.
+- Kept section-level loading, automatic summary creation, and bulk migration out of scope.
+
 ## v0.7.1 — 2026-07-14
 
 - Added `memory upgrade` / `升级记忆` for existing memory roots missing lifecycle folders.

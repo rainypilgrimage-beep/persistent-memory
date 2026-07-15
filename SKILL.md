@@ -7,7 +7,7 @@ description: Use when a user wants cross-session personal context shared by comp
 
 Persistent Memory is a transparent local context layer. It stores reviewed user context as Markdown files so compatible agents can read the same source of truth.
 
-**v0.7.1:** This release hardens lifecycle safety and existing-memory upgrades. It does not add Summary-first or section-level loading.
+**v0.8.0:** This release adds optional Summary-first loading for active on-demand files. It does not add section-level loading, automatic summary creation, or bulk migration.
 
 ## Runtime Contract
 
@@ -60,6 +60,16 @@ Trigger: the active conversation matches an entry in `_index.md`.
 2. Read those file(s).
 3. Use the information naturally.
 
+### Summary-first on-demand loading
+
+For an active on-demand file selected through `_index.md`:
+
+1. If the file has `## Summary` or `## 摘要` immediately after its title and optional introductory metadata, read that summary first. It must contain three to six factual bullet points about current status, key decisions, results, or constraints.
+2. If the summary is sufficient for the user's request, answer from it without claiming to have read the full file.
+3. If the requested fact is absent, ambiguous, or needs exact supporting detail, say that the summary is insufficient and read the full file before answering. Do not invent the missing detail.
+4. If the file has no valid summary, read the full file using the existing behavior. Do not fail, create a summary automatically, or treat the file as migrated.
+5. This flow never applies to `_core/`, `_index.md`, or `_archive/`. It is not section-level loading.
+
 ## Saving
 
 Trigger: `remember this`, `记住这个`, `save this`, `更新记忆`, `update memory`, `update my profile`, or `add to notes`.
@@ -68,6 +78,8 @@ Trigger: `remember this`, `记住这个`, `save this`, `更新记忆`, `update m
 2. Propose the exact content, destination, and index change.
 3. Wait for user confirmation.
 4. Save only the confirmed content; update `_index.md` for active on-demand files.
+
+When a confirmed update to an active on-demand file changes a fact represented in its `## Summary` / `## 摘要`, include the exact summary revision in the same preview and obtain the same explicit user confirmation before writing. Do not automatically create a Summary for an existing file and do not bulk-migrate memory files.
 
 For a vague update request, list explicit facts and inferred patterns separately, then wait for the user to approve individual items.
 
